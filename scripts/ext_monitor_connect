@@ -1,0 +1,5 @@
+#!/bin/sh
+# Run script when external monitor connects to computer
+# in this situation HDMI cord into laptop (builtin display)
+
+xrandr --output eDP1 --mode 1920x1080 --output HDMI1 --primary --mode 1920x1080 --right-of eDP1

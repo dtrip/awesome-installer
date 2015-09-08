@@ -1,0 +1,5 @@
+#!/bin/sh
+# Run script when external monitor disconnects from device
+# in this situation HDMI cord from laptop
+
+xrandr --output eDP1 --primary --mode 1920x1080 --output HDMI1 --off &

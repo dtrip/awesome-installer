@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Awesome 3.5.6
+Comment=Awesome Window Manager!
+Exec=awesome
+TryExec=awesome
+Icon=openbox
+Type=Application

@@ -1,0 +1,75 @@
+#!/bin/bash
+
+# Load the VERBOSE setting and other rcS variables
+. /lib/init/vars.sh
+
+# Define LSB log_* functions.
+# Depend on lsb-base (>= 3.2-14) to ensure that this file is present
+# and status_of_proc is working.
+. /lib/lsb/init-functions
+
+# Ubuntu's short release version name: trusty, utopic, etc..
+REL=$(lsb_release -cs)
+
+# Ubuntu's version number: 14.04, 14.10, 15.04 etc.
+VER=$(lsb_release -sr)
+
+# list of dependencies
+DEP="build-essential cmake convertall libxdg-basedir-dev libstartup-notification0-dev libxkbcommon-x11-dev libxkbcommon-dev libxcb-xkb-dev libxcb-icccm4-dev lua-ldoc libxcb-cursor-dev libxcb-xtest0-dev libxcb-keysyms1-dev3 lua-lgi-dev liblua5.1-0-dev asciidoc autoconf automake libtool gperf xmlto dpatch fakeroot git git-core debhelper"
+
+LOG='install-log.txt'
+
+REPOS=(
+    'http://git.sysphere.org/vicious'
+    'https://github.com/Elv13/radical.git'
+)
+
+log_daemon_msg "Removing cmake installed from repo ..."
+if sudo apt-get remove cmake > $LOG;
+    then log_end_msg 0 else log_end_msg 1
+fi
+
+
+log_daemon_msg "Installing cmake 3.x from PPA..."
+if sudo add-apt-repository ppa:george-edison55/cmake-3.x > $LOG;
+    then log_end_msg 0 else log_end_msg 1
+fi
+
+log_daemon_msg "Updating apt package list..."
+if sudo apt-get update > $LOG;
+    then log_end_msg 0 else log_end_msg 1
+fi
+
+log_daemon_msg "Installing dependencies...";
+if sudo apt-get -y install   > $LOG;
+    then log_end_msg 0 else log_end_msg 1
+fi
+
+log_end_msg "Cloning awesome GIT repo"
+if sudo git clone https://github.com/awesomeWM/awesome.git /usr/local/share/awesome;
+    then log_end_msg 0 else log_end_msg 1
+fi
+
+log_daemon_msg "Changing directories to awesome"
+if cd /usr/local/share/awesome;
+    then log_end_msg 0 else log_end_msg 1
+fi
+
+log_daemon_msg "Configuring build"
+if ./configure > $LOG;
+    then log_end_msg 0 else log_end_msg 1
+fi
+
+log_daemon_msg "Compiling awesome"
+if make > $LOG; 
+    then log_end_msg 0 else log_end_msg 1
+fi
+
+log_daemon_msg "Building deb package"
+if checkinstall;
+    then log_end_msg 0 else log_end_msg 1
+fi
+
+if dpkg -i awesome-*.deb > $LOG;
+    then log_end_msg 0 else log_end_msg 1
+fi
